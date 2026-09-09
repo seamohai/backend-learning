@@ -1,0 +1,10 @@
+server:
+  port: 9090
+
+spring:
+  application:
+    name: 配置管理
+
+seamohai:
+  name: 申陌海
+  job: 学生
