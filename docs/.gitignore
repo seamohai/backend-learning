@@ -1,0 +1,9 @@
+# VitePress 站点（docs 目录）相关产物
+node_modules/
+.vitepress/dist/
+.vitepress/cache/
+
+# npm / 包管理器日志
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
