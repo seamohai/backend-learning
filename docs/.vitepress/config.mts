@@ -1,6 +1,13 @@
 import { defineConfig } from 'vitepress'
 
+// GitHub Pages 的"项目站点"地址形如 https://<用户名>.github.io/<仓库名>/，
+// 所有静态资源必须以 /<仓库名>/ 为前缀，否则线上页面会因为找不到 CSS/JS 而一片空白。
+// 本地开发/预览用默认的 '/'，CI 构建时由环境变量 DOCS_BASE 传入仓库名前缀。
+// 以后如果换了自定义域名，或仓库名就是 <用户名>.github.io，把 DOCS_BASE 留空即可。
+const base = process.env.DOCS_BASE ?? '/'
+
 export default defineConfig({
+  base,
   lang: 'zh-CN',
   title: '后端工程化学习',
   description: 'Spring Boot 多模块学习笔记：01 快速入门 · 02 配置管理',
