@@ -1,0 +1,595 @@
+/* =============================================================================
+   后端工程化学习 · 站点视觉层（VitePress 默认主题的扩展层）
+   -----------------------------------------------------------------------------
+   改写模式：Redesign - Preserve
+     保留：页面 slug / 导航 / 侧边栏 / 搜索 / 大纲 / 正文，一律不动
+     只改：字体、色彩、间距节奏、组件外观、交互反馈
+
+   设计读数：技术学习笔记（docs / editorial），读者是自己、老师、同学
+   三个刻度：DESIGN_VARIANCE 5 ｜ MOTION_INTENSITY 3 ｜ VISUAL_DENSITY 4
+
+   本文件自己定的规则（技能要求"混用必须有明文规则"）：
+     · 单一强调色：teal（#0e7a6d 一族），全站只有这一个彩色
+     · 中性色：统一冷调，不把暖灰和冷灰混在一页
+     · 圆角：容器 12px / 交互控件 8px / 行内代码 6px / 徽标 999px
+     · 明暗：跟随右上角主题开关，单页内不出现"某一段突然变深色"
+
+   两处刻意偏离默认建议（理由已写在交付说明里）：
+     · 不用 Web 字体：中文 Web 字体动辄数 MB、国内 CDN 又不可达，
+       改用"中文优先的系统字体栈"，比默认主题的 Inter + 中文回退更好看
+     · 不插装饰图片：这是内容型文档站，加图会干扰阅读
+   ============================================================================= */
+
+/* ---------------------------------------------------------------------------
+   1. 设计令牌
+   --------------------------------------------------------------------------- */
+:root {
+  /* 强调色：单一 teal，饱和度克制，不用紫蓝渐变 */
+  --vp-c-brand-1: #0e7a6d;
+  --vp-c-brand-2: #0a6055;
+  --vp-c-brand-3: #0b564c;
+  --vp-c-brand-soft: rgba(14, 122, 109, 0.14);
+  --vp-c-brand-softer: rgba(14, 122, 109, 0.06);
+
+  /* 中性色：冷调统一 */
+  --vp-c-bg: #ffffff;
+  --vp-c-bg-alt: #f4f7f6;
+  --vp-c-bg-elv: #ffffff;
+  --vp-c-bg-soft: #f0f5f4;
+  --vp-c-text-1: #121a19;
+  --vp-c-text-2: #4b5655;
+  /* 三级文字对白底 4.75:1（默认主题约 3.3:1，偏灰看不清） */
+  --vp-c-text-3: #6b7574;
+  --vp-c-divider: #e3e9e8;
+  --vp-c-border: #d5dedc;
+  --vp-c-gutter: #eef2f1;
+
+  /* 主按钮：深青底 + 白字，对白底按钮对比度 8.6:1 */
+  --vp-button-brand-border: transparent;
+  --vp-button-brand-text: #ffffff;
+  --vp-button-brand-bg: #0b564c;
+  --vp-button-brand-hover-border: transparent;
+  --vp-button-brand-hover-text: #ffffff;
+  --vp-button-brand-hover-bg: #0a6055;
+  --vp-button-brand-active-border: transparent;
+  --vp-button-brand-active-text: #ffffff;
+  --vp-button-brand-active-bg: #094b43;
+
+  /* 代码块：跟中性色同族，不用默认的纯灰 */
+  --vp-code-block-bg: #f6f9f8;
+  --vp-code-line-highlight-color: rgba(14, 122, 109, 0.08);
+
+  /* 阴影：带中性色色相，不用纯黑投影 */
+  --vp-shadow-1: 0 1px 2px rgba(18, 26, 25, 0.06), 0 1px 3px rgba(18, 26, 25, 0.04);
+  --vp-shadow-2: 0 6px 18px rgba(18, 26, 25, 0.07);
+  --vp-shadow-3: 0 16px 44px rgba(18, 26, 25, 0.1);
+
+  /* 字体：中文优先的系统字体栈，拉丁字形也走现代无衬线 */
+  --vp-font-family-base: "HarmonyOS Sans SC", "PingFang SC", "Microsoft YaHei UI",
+    "Microsoft YaHei", "Source Han Sans SC", "Noto Sans CJK SC", system-ui,
+    -apple-system, "Segoe UI", Roboto, sans-serif;
+  --vp-font-family-mono: "JetBrains Mono", "Cascadia Code", "SF Mono", Consolas,
+    "Sarasa Mono SC", Menlo, monospace;
+}
+
+.dark {
+  --vp-c-brand-1: #4ecdb9;
+  --vp-c-brand-2: #6edcca;
+  --vp-c-brand-3: #35b3a0;
+  --vp-c-brand-soft: rgba(78, 205, 185, 0.16);
+  --vp-c-brand-softer: rgba(78, 205, 185, 0.07);
+
+  /* 深色底不用纯黑，带一点中性冷调 */
+  --vp-c-bg: #0e1413;
+  --vp-c-bg-alt: #131a19;
+  --vp-c-bg-elv: #182120;
+  --vp-c-bg-soft: #182120;
+  --vp-c-text-1: #e6edec;
+  --vp-c-text-2: #a2adac;
+  --vp-c-text-3: #798484;
+  --vp-c-divider: #1f2a29;
+  --vp-c-border: #2a3736;
+  --vp-c-gutter: #101615;
+
+  /* 深色下青底偏亮，白字压上去只有 2.59:1，所以改成深色字（6.4:1） */
+  --vp-button-brand-border: transparent;
+  --vp-button-brand-text: #06231f;
+  --vp-button-brand-bg: #4ecdb9;
+  --vp-button-brand-hover-border: transparent;
+  --vp-button-brand-hover-text: #06231f;
+  --vp-button-brand-hover-bg: #6edcca;
+  --vp-button-brand-active-border: transparent;
+  --vp-button-brand-active-text: #06231f;
+  --vp-button-brand-active-bg: #35b3a0;
+
+  --vp-code-block-bg: #131b1a;
+  --vp-code-line-highlight-color: rgba(78, 205, 185, 0.1);
+
+  --vp-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --vp-shadow-2: 0 6px 18px rgba(0, 0, 0, 0.36);
+  --vp-shadow-3: 0 16px 44px rgba(0, 0, 0, 0.45);
+}
+
+/* ---------------------------------------------------------------------------
+   2. 基础与排版
+   --------------------------------------------------------------------------- */
+html {
+  scroll-behavior: smooth;
+  /* 锚点跳转时给固定导航留出空间，避免标题被压住 */
+  scroll-padding-top: calc(var(--vp-nav-height) + 20px);
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--vp-c-brand-soft);
+  color: var(--vp-c-text-1);
+}
+
+/* 可见的键盘焦点环（无障碍要求，不能为了好看砍掉） */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+summary:focus-visible,
+.VPButton:focus-visible,
+.VPLink:focus-visible {
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* 细滚动条，不抢视觉 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--vp-c-border) transparent;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--vp-c-border);
+  border: 3px solid transparent;
+  background-clip: content-box;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--vp-c-text-3);
+  background-clip: content-box;
+}
+
+/* 正文：中文行高比英文要松，行宽要收窄 */
+.vp-doc {
+  letter-spacing: 0.01em;
+}
+.vp-doc p,
+.vp-doc li {
+  line-height: 1.8;
+}
+.vp-doc p {
+  max-width: 68ch;
+}
+.vp-doc li + li {
+  margin-top: 0.35rem;
+}
+.vp-doc ul li::marker {
+  color: var(--vp-c-text-3);
+}
+
+/* 标题：大标题收紧字距，小标题不用全大写（中文没有大小写） */
+.vp-doc h1 {
+  font-size: 1.95rem;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+}
+.vp-doc h2 {
+  font-size: 1.4rem;
+  letter-spacing: -0.01em;
+  margin-top: 3rem;
+  padding-top: 1.6rem;
+}
+.vp-doc h3 {
+  font-size: 1.14rem;
+  letter-spacing: -0.005em;
+  margin-top: 2rem;
+}
+.vp-doc h4 {
+  font-size: 1rem;
+  color: var(--vp-c-text-1);
+}
+.vp-doc strong {
+  color: var(--vp-c-text-1);
+  font-weight: 600;
+}
+.vp-doc a {
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: color 0.18s ease, text-decoration-color 0.18s ease;
+}
+
+/* 正文稍宽一点：这套笔记表格多，688px 会挤 */
+@media (min-width: 960px) {
+  .VPDoc .content-container {
+    max-width: 760px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   3. 表格（笔记里最主要的元素，单独给足处理）
+   --------------------------------------------------------------------------- */
+.vp-doc table {
+  display: table;
+  width: 100%;
+  margin: 1.4rem 0;
+  font-size: 0.9rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 12px;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+}
+.vp-doc th {
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1);
+  font-weight: 600;
+  text-align: left;
+}
+.vp-doc th,
+.vp-doc td {
+  border: 0;
+  border-bottom: 1px solid var(--vp-c-divider);
+  padding: 0.62rem 0.85rem;
+  line-height: 1.65;
+  vertical-align: top;
+}
+.vp-doc tr:last-child td {
+  border-bottom: 0;
+}
+/* 关掉斑马纹和行上边框，靠分隔线就够了 */
+.vp-doc tr {
+  background-color: transparent;
+  border-top: 0;
+}
+/* 数字对齐：技术笔记里全是端口、版本号、时间 */
+.vp-doc td {
+  font-variant-numeric: tabular-nums;
+}
+/* 表格里的代码不要撑破单元格 */
+.vp-doc td code {
+  white-space: nowrap;
+}
+@media (max-width: 768px) {
+  .vp-doc table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   4. 引用块（笔记里大量 > 提示，是最需要脱离"默认样式"的地方）
+   --------------------------------------------------------------------------- */
+.vp-doc blockquote {
+  margin: 1.4rem 0;
+  padding: 0.95rem 1.15rem;
+  border-left: 3px solid var(--vp-c-brand-1);
+  border-radius: 0 10px 10px 0;
+  background: var(--vp-c-brand-softer);
+  color: var(--vp-c-text-1);
+}
+.vp-doc blockquote > p {
+  margin: 0;
+  max-width: none;
+  font-size: 0.94rem;
+  line-height: 1.8;
+}
+.vp-doc blockquote > p + p {
+  margin-top: 0.7rem;
+}
+
+/* VitePress 自带的 ::: tip / warning 容器也统一到同一套语言 */
+.vp-doc .custom-block {
+  border-radius: 12px;
+  border: 1px solid var(--vp-c-divider);
+  border-left-width: 3px;
+  font-size: 0.94rem;
+}
+.vp-doc .custom-block .custom-block-title {
+  font-weight: 600;
+}
+
+/* ---------------------------------------------------------------------------
+   5. 代码
+   --------------------------------------------------------------------------- */
+.vp-doc :not(pre) > code {
+  border-radius: 6px;
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1);
+  padding: 0.15em 0.4em;
+  font-size: 0.85em;
+}
+.vp-doc a > code {
+  color: var(--vp-c-brand-1);
+}
+.vp-doc div[class*='language-'] {
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 12px;
+  margin: 1.4rem 0;
+}
+.vp-doc div[class*='language-'] pre {
+  line-height: 1.72;
+}
+.vp-doc div[class*='language-'] > span.lang {
+  color: var(--vp-c-text-3);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+}
+/* 行号模式下，把行号栏和正文分开一点 */
+.vp-doc .line-numbers-wrapper {
+  border-right: 1px solid var(--vp-c-divider);
+  color: var(--vp-c-text-3);
+}
+
+/* ---------------------------------------------------------------------------
+   6. 首页：hero 与特性区
+   --------------------------------------------------------------------------- */
+/* 去掉默认的标题渐变（文字渐变是最典型的 AI 味之一），改为实色 */
+.VPHero .name {
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  -webkit-text-fill-color: currentColor;
+  color: var(--vp-c-text-1);
+  letter-spacing: -0.03em;
+  line-height: 1.22;
+}
+.VPHero .text {
+  color: var(--vp-c-brand-1);
+  letter-spacing: -0.03em;
+  line-height: 1.22;
+}
+.VPHero .tagline {
+  color: var(--vp-c-text-2);
+  line-height: 1.7;
+  max-width: 34em;
+}
+.VPHero .actions {
+  gap: 12px;
+}
+@media (min-width: 960px) {
+  .VPHero .name,
+  .VPHero .text {
+    font-size: 2.7rem;
+  }
+}
+
+/* 三张等高卡片是"最通用的 AI 布局"，改成带顶线的三栏 */
+.VPFeatures .items {
+  gap: 0;
+}
+.VPFeature {
+  border: 0;
+  border-radius: 0;
+  border-top: 2px solid var(--vp-c-divider);
+  background: transparent;
+  padding: 1.15rem 1.4rem 0 0;
+  transition: border-color 0.22s ease;
+}
+.VPFeature:hover {
+  background: transparent;
+  box-shadow: none;
+  border-top-color: var(--vp-c-brand-1);
+}
+.VPFeature .box {
+  padding: 0;
+}
+.VPFeature .title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--vp-c-text-1);
+}
+.VPFeature .details {
+  font-size: 0.88rem;
+  line-height: 1.75;
+  color: var(--vp-c-text-2);
+}
+@media (max-width: 768px) {
+  .VPFeature {
+    padding: 1rem 0 0;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   7. 按钮与交互反馈
+   --------------------------------------------------------------------------- */
+.VPButton {
+  border-radius: 8px;
+  transition: transform 0.18s cubic-bezier(0.2, 0.7, 0.3, 1),
+    background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+.VPButton.brand {
+  /* 颜色走 --vp-button-brand-* 令牌，明暗两套各自满足对比度要求 */
+  box-shadow: 0 1px 2px rgba(11, 86, 76, 0.22);
+}
+.VPButton.brand:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(11, 86, 76, 0.2);
+}
+.VPButton.alt {
+  background: transparent;
+  border-color: var(--vp-c-border);
+  color: var(--vp-c-text-1);
+}
+.VPButton.alt:hover {
+  background: var(--vp-c-brand-softer);
+  border-color: var(--vp-c-brand-1);
+  color: var(--vp-c-brand-1);
+  transform: translateY(-1px);
+}
+/* 按下时的物理反馈 */
+.VPButton:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+/* ---------------------------------------------------------------------------
+   8. 导航 / 侧边栏 / 大纲
+   --------------------------------------------------------------------------- */
+.VPNavBar {
+  border-bottom-color: var(--vp-c-divider);
+}
+.VPNavBarMenuLink {
+  border-radius: 8px;
+  transition: color 0.18s ease;
+}
+.VPNavBarMenuLink:hover,
+.VPNavBarMenuLink.active {
+  color: var(--vp-c-brand-1);
+}
+/* 当前页在导航里给一条下划线，知道自己在哪 */
+.VPNavBarMenuLink.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 2px;
+  background: var(--vp-c-brand-1);
+  border-radius: 999px;
+}
+.VPNavBarMenuLink {
+  position: relative;
+}
+
+.VPSidebarItem .link {
+  border-radius: 8px;
+  transition: background-color 0.18s ease, color 0.18s ease;
+  padding-right: 8px;
+}
+.VPSidebarItem.level-1 .link:hover,
+.VPSidebarItem.level-2 .link:hover {
+  background: var(--vp-c-bg-soft);
+}
+.VPSidebarItem.is-active > .item .link .text,
+.VPSidebarItem .link:hover .text {
+  color: var(--vp-c-brand-1);
+}
+.VPSidebarItem.is-active > .item .link .text {
+  font-weight: 600;
+}
+.VPSidebarItem.level-0 > .item > .text {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.VPDocAsideOutline .outline-link {
+  transition: color 0.18s ease;
+}
+.VPDocAsideOutline .outline-link:hover,
+.VPDocAsideOutline .outline-link.active {
+  color: var(--vp-c-brand-1);
+}
+.VPDocAsideOutline .outline-marker {
+  background-color: var(--vp-c-brand-1);
+}
+
+/* 上/下篇 */
+.pager-link {
+  border-radius: 12px;
+  transition: border-color 0.18s ease, background-color 0.18s ease;
+}
+.pager-link:hover {
+  border-color: var(--vp-c-brand-1);
+  background: var(--vp-c-brand-softer);
+}
+.pager-link .desc {
+  font-size: 0.78rem;
+}
+.pager-link .title {
+  color: var(--vp-c-brand-1);
+}
+
+/* 搜索面板 */
+.VPLocalSearchBox .shell {
+  border-radius: 14px;
+  border-color: var(--vp-c-border);
+}
+.VPLocalSearchBox .result {
+  border-radius: 10px;
+}
+.VPLocalSearchBox .result.selected {
+  background: var(--vp-c-brand-softer);
+}
+.VPLocalSearchBox .search-bar .keyboard-shortcut {
+  font-family: var(--vp-font-family-mono);
+}
+
+/* 跳到主内容（键盘可达性） */
+.VPSkipLink:focus {
+  border-radius: 8px;
+  background: var(--vp-c-brand-3);
+  color: #ffffff;
+  outline: none;
+}
+
+/* ---------------------------------------------------------------------------
+   9. 阅读进度条
+      MOTION_INTENSITY = 3 的克制做法：纯 CSS 滚动驱动动画，
+      不写任何 JS、不监听 scroll 事件；浏览器不支持时直接不显示。
+   --------------------------------------------------------------------------- */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 32;
+  background: var(--vp-c-brand-1);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  pointer-events: none;
+}
+@supports (animation-timeline: scroll()) {
+  body::after {
+    animation: vp-reading-progress linear;
+    animation-timeline: scroll(root);
+  }
+  @keyframes vp-reading-progress {
+    to {
+      transform: scaleX(1);
+    }
+  }
+}
+@supports not (animation-timeline: scroll()) {
+  body::after {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   10. 动效降级：只要系统开了"减少动态效果"，所有位移与动画一律关闭
+   --------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .VPButton.brand:hover,
+  .VPButton.alt:hover,
+  .VPButton:active {
+    transform: none;
+  }
+  body::after {
+    display: none;
+  }
+}
