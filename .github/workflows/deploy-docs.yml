@@ -46,6 +46,10 @@ jobs:
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
+        with:
+          # 仓库还没开 Pages 时，让这一步自己把 Pages 打开（Pages 已开启时此参数无副作用）。
+          # 依赖上面声明的 pages: write 权限。
+          enablement: true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
