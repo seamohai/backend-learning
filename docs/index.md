@@ -12,6 +12,9 @@ hero:
     - theme: alt
       text: 看 02 配置管理
       link: /02-config
+    - theme: alt
+      text: 看 04 Web 进阶
+      link: /04-web
 
 features:
   - title: 自包含
@@ -28,11 +31,13 @@ features:
 | --- | --- | --- |
 | [01 · 快速入门](/01-quickstart) | 多模块 Maven 骨架、启动类、控制器、实体类、从零跑起第一个接口 | 8888 |
 | [02 · 配置管理](/02-config) | `@Value` 四种形态、`@ConfigurationProperties`、多环境 `@Profile`、配置校验 | 9090 |
+| [03 · 日志管理](/03-logging) | 日志门面与实现、五个级别、pattern 占位符、`logback-spring.xml`、MDC traceId、脱敏 | 8009 |
+| [04 · Web 进阶](/04-web) | 统一响应体 `Result`、分页 `PageResult`、全局异常处理、`@Valid` 参数校验、Filter 与 Interceptor | 8004 |
 
 ## 怎么用这个站点
 
 - 左侧目录按模块编号排列，一个模块一篇笔记；
-- 右上角有搜索框，可以直接搜关键字（比如 `@Profile`、`placeholder`）；
+- 右上角有搜索框，可以直接搜关键字（比如 `@Profile`、`traceId`、`@RestControllerAdvice`）；
 - 每篇笔记右侧是「本页目录」，长文里跳转很快；
 - 笔记里的命令行都是 Windows（PowerShell）环境下的写法。
 

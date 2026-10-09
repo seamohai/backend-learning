@@ -10,7 +10,7 @@ export default defineConfig({
   base,
   lang: 'zh-CN',
   title: '后端工程化学习',
-  description: 'Spring Boot 多模块学习笔记：01 快速入门 · 02 配置管理',
+  description: 'Spring Boot 多模块学习笔记：01 快速入门 · 02 配置管理 · 03 日志管理 · 04 Web 进阶',
 
   // favicon 与分享卡片信息。注意：head 里的路径不会被 base 自动加前缀，
   // 所以这里手动拼上（本地是 /，GitHub Pages 是 /backend-learning/）。
@@ -23,7 +23,7 @@ export default defineConfig({
       'meta',
       {
         property: 'og:description',
-        content: 'Spring Boot 多模块学习笔记：01 快速入门 · 02 配置管理'
+        content: 'Spring Boot 多模块学习笔记：01 快速入门 · 02 配置管理 · 03 日志管理 · 04 Web 进阶'
       }
     ],
     ['meta', { property: 'og:locale', content: 'zh_CN' }]
@@ -46,7 +46,9 @@ export default defineConfig({
     nav: [
       { text: '首页', link: '/' },
       { text: '01 快速入门', link: '/01-quickstart' },
-      { text: '02 配置管理', link: '/02-config' }
+      { text: '02 配置管理', link: '/02-config' },
+      { text: '03 日志管理', link: '/03-logging' },
+      { text: '04 Web 进阶', link: '/04-web' }
     ],
 
     sidebar: [
@@ -54,7 +56,9 @@ export default defineConfig({
         text: '学习笔记',
         items: [
           { text: '01 · 快速入门', link: '/01-quickstart' },
-          { text: '02 · 配置管理', link: '/02-config' }
+          { text: '02 · 配置管理', link: '/02-config' },
+          { text: '03 · 日志管理', link: '/03-logging' },
+          { text: '04 · Web 进阶', link: '/04-web' }
         ]
       }
     ],
