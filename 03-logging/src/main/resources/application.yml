@@ -1,0 +1,11 @@
+server:
+  port: 8009
+
+spring:
+  output:
+    ansi:
+      enabled: always   # 强制输出 ANSI 颜色（重定向到文件/管道时也保留）
+
+logging:
+  pattern:
+    console: '%d{HH:mm:ss} %clr([%thread]){yellow} %clr(%-5level) %clr(%logger{36}){cyan} [%X{traceId} %clr(%logger){bg_blue}] - %msg%n'
