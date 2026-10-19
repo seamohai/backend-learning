@@ -30,6 +30,7 @@
         <module>12-test</module>
         <module>13-actuator</module>
         <module>14-deploy</module>
+        <module>test-redis1</module>
     </modules>
 
 
@@ -64,6 +65,7 @@
             <artifactId>spring-boot-starter-webmvc-test</artifactId>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
     <build>

@@ -1,0 +1,44 @@
+server:
+  port: 8006
+
+spring:
+  application:
+    name: test-redis1 短信登录案例
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 10
+      timeout: 3s
+      # Lettuce 默认多条命令复用同一个连接，池化后按连接池取用
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 2
+          max-wait: 1s
+
+
+seamohai:
+  # token 的签名密钥，生产环境从环境变量注入，不要写死在仓库里
+  jwt:
+    secret: sms-login-demo-secret-key-please-replace-in-production-2026
+    expire-seconds: 7200
+  sms:
+    # true 时不调用短信 SDK，验证码只写日志与 Redis，方便本地调试
+    mock-enabled: true
+    # 验证码有效期（秒）
+    code-expire-seconds: 300
+    # 同一个手机号两次发送的最小间隔（秒），前端倒计时用同一个数字
+    send-interval-seconds: 60
+    # 同一个手机号一天最多发多少条
+    send-daily-limit: 10
+    # 同一个验证码最多允许输错几次
+    max-fail-count: 5
+    ccp:
+      serverIp: app.cloopen.com
+      port: 8883
+      accountSId: 2c94811c8cd4da0a018eac91c648517d
+      accountToken: fad08006efd4410dada31f2b6c03f4fc
+      appId: 2c94811c8cd4da0a018eac91c7de5184
+      templateId: 1
