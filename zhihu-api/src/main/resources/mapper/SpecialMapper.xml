@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.seamohai.zhihu.mapper.SpecialMapper">
+
+    <select id="selectByCategory" resultType="top.seamohai.zhihu.entity.Special">
+        SELECT id,
+        title,
+        introduction    AS description,
+        banner,
+        is_following    AS isFollowing,
+        followers_count AS followersCount,
+        view_count      AS viewCount,
+        updated,
+        category
+        FROM t_special
+        WHERE category = #{category}
+        ORDER BY updated DESC
+    </select>
+
+    <select id="selectByPage" resultType="top.seamohai.zhihu.entity.Special">
+        SELECT id,
+        title,
+        introduction    AS description,
+        banner,
+        is_following    AS isFollowing,
+        followers_count AS followersCount,
+        view_count      AS viewCount,
+        updated,
+        category
+        FROM t_special
+        ORDER BY updated DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="selectByCategoryAndPage" resultType="top.seamohai.zhihu.entity.Special">
+        SELECT id,
+        title,
+        introduction    AS description,
+        banner,
+        is_following    AS isFollowing,
+        followers_count AS followersCount,
+        view_count      AS viewCount,
+        updated,
+        category
+        FROM t_special
+        <where>
+            <if test="category != null and category != ''">
+                category = #{category}
+            </if>
+        </where>
+        ORDER BY updated DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countByCategory" resultType="long">
+        SELECT COUNT(*)
+        FROM t_special
+        <where>
+            <if test="category != null and category != ''">
+                category = #{category}
+            </if>
+        </where>
+    </select>
+</mapper>
