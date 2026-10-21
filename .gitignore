@@ -31,3 +31,11 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### 本地密钥（不入库） ###
+application-local.yml
+application-local-*.yml
+
+### Node ###
+node_modules/
+
