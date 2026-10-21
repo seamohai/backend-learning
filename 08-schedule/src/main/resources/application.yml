@@ -1,2 +1,34 @@
 server:
   port: 8008
+
+spring:
+  # 真实密钥不写在这里：放 application-local.yml（已加入 .gitignore，不入库）
+  config:
+    import: optional:classpath:application-local.yml
+  application:
+    name: 08-定时任务与邮件
+  mail:
+    host: smtp.163.com
+    port: 465
+    username: 18112668476@163.com
+    password: ${MAIL_PASSWORD:}   # 163 客户端授权码，本地放 application-local.yml
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+
+# 和风天气：每个账号有独立的 API Host，去 https://console.qweather.com/setting 复制
+# 形如 xxxxxx.re.qweatherapi.com，下面的 url 是本人账号的 Host
+weather:
+  api:
+    key: ${WEATHER_API_KEY:}   # 和风 key，本地放 application-local.yml
+    city: 101190404      # 昆山
+    city-name: 昆山       # 邮件标题用，和 city 保持一致
+    url: https://na59feyr7t.re.qweatherapi.com/v7/weather/3d
+
+# 收件人，多个用逗号分隔（@Value 注入 String[] 时 Spring 会自动切）
+email:
+  recipients: 18112668476@163.com,3292166349@qq.com,16422802@qq.com
