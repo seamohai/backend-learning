@@ -33,6 +33,7 @@ features:
 | [02 · 配置管理](/02-config) | `@Value` 四种形态、`@ConfigurationProperties`、多环境 `@Profile`、配置校验 | 9090 |
 | [03 · 日志管理](/03-logging) | 日志门面与实现、五个级别、pattern 占位符、`logback-spring.xml`、MDC traceId、脱敏 | 8009 |
 | [04 · Web 进阶](/04-web) | 统一响应体 `Result`、分页 `PageResult`、全局异常处理、`@Valid` 参数校验、Filter 与 Interceptor | 8004 |
+| [05 · 数据访问](/05-mybatis) | ORM 与三层结构、23 字段类型映射、`BaseMapper` / `IService`、`LambdaQueryWrapper`、自动填充、逻辑删除、乐观锁、事务、HikariCP | 8005 |
 
 ## 怎么用这个站点
 
