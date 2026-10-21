@@ -399,6 +399,11 @@ public class UserController {
         return userService.getUser(id);
     }
 
+    @PutMapping("/email")
+    public boolean updateEmail(@RequestParam String username,
+                               @RequestParam String email) {
+        return userService.modifyEmailByUsername(username, email);
+    }
     /* ==================== 删 ==================== */
 
     /**

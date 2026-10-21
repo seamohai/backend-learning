@@ -35,4 +35,23 @@ public interface UserMapper extends BaseMapper<User> {
      */
     @Select("SELECT id, username, nickname, deleted, version FROM t_user WHERE id = #{id}")
     User selectRawById(@Param("id") Long id);
+
+    /**
+     * 模拟慢查询：让数据库"睡"指定秒数再返回。<b>仅用于连接池压测。</b>
+     * <p>
+     * 为什么需要它：本机 MySQL 太快，一条普通查询只要 1~3 ms，
+     * 连接占用时间极短，无论并发多高都很难把连接池压到超时。
+     * 这个 SQL 用 MySQL 的 {@code SLEEP(n)} 函数强行让这条查询耗时 n 秒，
+     * 于是连接会被<b>持续占用 n 秒</b>，这样才能复现
+     * {@code Connection is not available, request timed out}。
+     * <p>
+     * <b>⚠️ 生产代码里绝对不会出现这种 SQL</b>，它纯粹是教学实验用的探针 ——
+     * 用来把"慢 SQL / 长事务占住连接"这个抽象的因果，
+     * 变成可以亲眼看到的超时异常。
+     *
+     * @param seconds 睡眠秒数
+     * @return 固定返回 1（{@code SELECT SLEEP(n)} 的结果是 0 或 1）
+     */
+    @Select("SELECT SLEEP(#{seconds})")
+    Integer slowQuery(@Param("seconds") int seconds);
 }

@@ -24,6 +24,7 @@ public interface UserService extends IService<User> {
     boolean modifyUser(User user);
     boolean modifyUserStatus(Long id, Integer status);
     boolean recharge(Long id, BigDecimal amount);
+    boolean modifyEmailByUsername(String username,String email);
 
     /* 查（基础） */
     User getUser(Long id);

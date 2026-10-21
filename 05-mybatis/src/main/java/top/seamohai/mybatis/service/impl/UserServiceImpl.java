@@ -133,6 +133,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return updateById(user);
     }
 
+    @Override
+    public boolean modifyEmailByUsername(String username, String email) {
+        // 注意这里是 || 不是 &&：只要【任意一个】为空就要拦下来。
+        // 写成 && 就成了"两个都为空才拦"，逻辑正好反了。
+        // 另外用 hasText 而不是 isEmpty：isEmpty("   ") 是 false，
+        // 纯空白字符串会被放过。
+        if (!StringUtils.hasText(username) || !StringUtils.hasText(email)) {
+            throw new IllegalArgumentException("用户名和邮箱都不能为空");
+        }
+        return update(new LambdaUpdateWrapper<User>()
+                .eq(User::getUsername, username)
+                .set(User::getEmail, email));
+    }
+
     /**
      * 按主键查用户。
      * <p>

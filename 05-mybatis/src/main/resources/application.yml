@@ -11,7 +11,7 @@ spring:
     password: 123456            # 按本机 MySQL 实际密码修改
     hikari:                     # 连接池参数，不写就用默认值
       pool-name: backend-learning-pool
-      maximum-pool-size: 10     # 池上限
+      maximum-pool-size: 1     # 池上限
       minimum-idle: 5           # 空闲保底连接数
       connection-timeout: 3000  # 取连接超时，毫秒
       max-lifetime: 1800000     # 连接最长存活，毫秒

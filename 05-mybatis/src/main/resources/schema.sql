@@ -39,3 +39,51 @@ CREATE TABLE t_user
     KEY idx_status_gender (status, gender)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='用户表';
+
+
+DROP TABLE IF EXISTS t_course;
+
+CREATE TABLE t_course
+(
+    id          BIGINT UNSIGNED AUTO_INCREMENT COMMENT '主键',
+    name        VARCHAR(100)     NOT NULL COMMENT '课程名',
+    teacher     VARCHAR(50)      NOT NULL COMMENT '授课教师',
+    credit      DECIMAL(3, 1)    NOT NULL DEFAULT 0.0 COMMENT '学分，0.5 的倍数',
+    capacity    INT UNSIGNED     NOT NULL DEFAULT 0 COMMENT '容量上限',
+    enrolled    INT UNSIGNED     NOT NULL DEFAULT 0 COMMENT '已选人数',
+    stock       INT UNSIGNED     NOT NULL DEFAULT 0 COMMENT '剩余名额，下单时扣减（练习 5 用）',
+    description TEXT COMMENT '课程简介',
+    create_time DATETIME         NOT NULL COMMENT '创建时间，自动填充',
+    update_time DATETIME         NOT NULL COMMENT '更新时间，自动填充',
+    deleted     TINYINT          NOT NULL DEFAULT 0 COMMENT '逻辑删除',
+    version     INT              NOT NULL DEFAULT 0 COMMENT '乐观锁版本号',
+    PRIMARY KEY (id),
+    UNIQUE KEY uk_name (name),
+    KEY idx_teacher (teacher)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='课程表';
+
+
+-- ============================================================
+-- 订单表（练习 5：跨表事务原子性）
+-- ============================================================
+DROP TABLE IF EXISTS t_order;
+
+CREATE TABLE t_order
+(
+    id          BIGINT UNSIGNED AUTO_INCREMENT COMMENT '主键',
+    order_no    VARCHAR(32)      NOT NULL COMMENT '订单号',
+    course_id   BIGINT UNSIGNED  NOT NULL COMMENT '课程 id',
+    user_id     BIGINT UNSIGNED  NOT NULL COMMENT '用户 id',
+    amount      DECIMAL(10, 2)   NOT NULL DEFAULT 0.00 COMMENT '订单金额',
+    status      TINYINT          NOT NULL DEFAULT 1 COMMENT '1 已创建 / 0 已取消',
+    remark      VARCHAR(200) COMMENT '备注',
+    create_time DATETIME         NOT NULL COMMENT '创建时间，自动填充',
+    update_time DATETIME         NOT NULL COMMENT '更新时间，自动填充',
+    deleted     TINYINT          NOT NULL DEFAULT 0 COMMENT '逻辑删除',
+    version     INT              NOT NULL DEFAULT 0 COMMENT '乐观锁版本号',
+    PRIMARY KEY (id),
+    UNIQUE KEY uk_order_no (order_no),
+    KEY idx_course_id (course_id)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='订单表';
